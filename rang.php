@@ -23,8 +23,8 @@ class Rang {
     $this->_CI->load->config('rang');
     $this->_CI->load->helper("url");
 
-    $this->_client_secret       = $this->_CI->config->item('rang_secret');
-    $this->_response_extension  = $this->_CI->config->item('rang_response_extension');
+    $this->_client_secret       = "client_secret";
+    $this->_response_extension  = "json";
     $this->_base_uri            = "https://rang.com/wl";
   }
 
@@ -48,15 +48,16 @@ class Rang {
 
   public function get_gift_token($reference, array $params=array(), $full_api=FALSE)
   {
+    $base_uri = "$this->_base_uri/issue_token.$this->_response_extension";
+
     $params["reference"]   = $reference;
     $params["api_token"]   = $this->_client_secret;
     $params['with_offers'] = $full_api;
 
-    $base_uri = "$this->_base_uri/issue_token.$this->_response_extension";
     $request_uri = $this->_build_uri($base_uri, $params);
 
-    $json_response = $this->_curl_call('get', $request_uri);
-    return json_decode($json_response);
+    $response = $this->_curl_call('get', $request_uri);
+    return json_decode($response);
   }
 
 
@@ -88,7 +89,6 @@ class Rang {
     );
 
     $request_uri = $this->_build_uri($base_uri, $query_params);
-    echo $request_uri;
     $response = $this->_curl_call('post', $request_uri);
     return json_encode($response);
   }
@@ -113,13 +113,12 @@ class Rang {
 
   public function send_rewards_emails($emails, array $params=array())
   {
+    $base_uri = "$this->_base_uri/issue_emails.this->_response_extension";
     $query_params = array('api_token' => $this->_client_secret);
 
     $data = $this->_prepare_email_data($emails, $params);
 
-    $base_uri = "$this->_base_uri/issue_emails.this->_response_extension";
     $request_uri = $this->_build_uri($base_uri, $query_params);
-
     $json_response = $this->_curl_call('post', $request_uri, $data );
     return json_decode($json_response);
   }
@@ -160,15 +159,14 @@ class Rang {
       );
     }
 
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt ($ch, CURLOPT_SSL_VERIFYHOST, 0);
     curl_setopt ($ch, CURLOPT_SSL_VERIFYPEER, 0);
-    $response = curl_exec ($ch);
-    $http_status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+    $response     = curl_exec ($ch);
+    $http_status  = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
     curl_close ($ch);
-
-    echo $http_status;
-
 
     $success = ($method == 'get' && $http_status == HTTP_GET_SUCCESS) ||
                ($method == 'post' && $http_status == HTTP_POST_SUCCESS);
@@ -227,7 +225,6 @@ class Rang {
       $references[] = $entry;
     }
     $data['references'] = $references;
-    echo json_encode($data);
     return $data;
   }
 
