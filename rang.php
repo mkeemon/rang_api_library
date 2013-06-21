@@ -29,7 +29,7 @@ class Rang {
   }
 
 
-  /*
+   /*
   |--------------------------------------------------------------------------
   | Whitelabel API
   |--------------------------------------------------------------------------
@@ -49,15 +49,13 @@ class Rang {
   public function get_gift_token($reference, array $params=array(), $full_api=FALSE)
   {
     $base_uri = "$this->_base_uri/issue_token.$this->_response_extension";
-
     $params["reference"]   = $reference;
     $params["api_token"]   = $this->_client_secret;
     $params['with_offers'] = $full_api;
 
     $request_uri = $this->_build_uri($base_uri, $params);
-
-    $response = $this->_curl_call('get', $request_uri);
-    return json_decode($response);
+    $json_response = $this->_curl_call('get', $request_uri);
+    return json_decode($json_response);
   }
 
 
@@ -104,17 +102,27 @@ class Rang {
   /**
    * Send a rewards email to one email address
    *
-   * @param   array emails List of emails to be sent deals
+   * @param   mixed emails Either array of emails or single email
    * @param   array params Array indexed by email addresses containing arrays of optional
    *                       parameters to target user (gender, age, location, deliver_email)
+   *                       Can also be array of parameters index by nothing (for single email)
    * @return  array Information regarding the email
    *
    */
 
   public function send_rewards_emails($emails, array $params=array())
   {
-    $base_uri = "$this->_base_uri/issue_emails.this->_response_extension";
+    $base_uri = "$this->_base_uri/issue_emails.$this->_response_extension";
     $query_params = array('api_token' => $this->_client_secret);
+
+    if(!is_array($emails))
+    {
+      $single_email = $emails;
+      $single_params = $params;
+
+      $emails = array($single_email);
+      $params = array($single_email => $single_params);
+    }
 
     $data = $this->_prepare_email_data($emails, $params);
 
@@ -159,14 +167,13 @@ class Rang {
       );
     }
 
-    curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt ($ch, CURLOPT_SSL_VERIFYHOST, 0);
     curl_setopt ($ch, CURLOPT_SSL_VERIFYPEER, 0);
-
-    $response     = curl_exec ($ch);
-    $http_status  = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
+    $response = curl_exec ($ch);
+    $http_status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close ($ch);
+
 
     $success = ($method == 'get' && $http_status == HTTP_GET_SUCCESS) ||
                ($method == 'post' && $http_status == HTTP_POST_SUCCESS);
@@ -179,8 +186,11 @@ class Rang {
     // Response is not successful, throw error
     else
     {
+      //return $response;
+
       $decoded_response = json_decode( $response );
       throw new RangException( $decoded_response->error, $http_status );
+
     }
 
   }
