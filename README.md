@@ -51,7 +51,6 @@ $with_offers = FALSE;
 
 $gift_token = $rang->gift_token($reference, $params, $with_offers);
 
-//get an offer from
 $offer = $gift_token->offers[0];
 
 $claim_response = $rang->claim_offer($gift_token->token, $offer->id);
