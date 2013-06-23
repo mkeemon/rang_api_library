@@ -19,9 +19,7 @@ class Rang {
 
   public function __construct()
   {
-    $this->_CI =& get_instance();
-    $this->_CI->load->config('rang');
-    $this->_CI->load->helper("url");
+    parent:__construct();
 
     $this->_client_secret       = "client_secret";
     $this->_response_extension  = "json";
