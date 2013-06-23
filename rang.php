@@ -5,7 +5,6 @@
  *
  * Handles interactions with the Rang API
  *
- * @category  Library
  * @version   0.1
  * @author    Matthew Keemon
  * @link      http://developers.rang.com/
@@ -30,7 +29,7 @@ class Rang {
   |--------------------------------------------------------------------------
   | Whitelabel/Full API
   |--------------------------------------------------------------------------
-  | + get_gift_token
+  | + GET gift_token
   |
   */
 
@@ -43,7 +42,7 @@ class Rang {
    *
    */
 
-  public function get_gift_token($reference, array $params=array(), $full_api=FALSE)
+  public function gift_token($reference, array $params=array(), $full_api=FALSE)
   {
     $base_uri = "$this->_base_uri/issue_token.$this->_response_extension";
     $params["reference"]   = $reference;
@@ -60,7 +59,7 @@ class Rang {
   |--------------------------------------------------------------------------
   | Full API
   |--------------------------------------------------------------------------
-  | + Claim Offer
+  | + POST claim_offer
   |
   */
 
@@ -92,7 +91,7 @@ class Rang {
   |--------------------------------------------------------------------------
   | Email API
   |--------------------------------------------------------------------------
-  | + send_rewards_emails
+  | + POST send_rewards_emails
   |
   */
 
