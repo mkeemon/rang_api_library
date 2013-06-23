@@ -1,4 +1,4 @@
-rang_api_library
+Rang API PHP Library
 ================
 
 http://developers.rang.com

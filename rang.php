@@ -1,4 +1,4 @@
-<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php
 
 /**
  * Rang API Library
@@ -17,11 +17,10 @@ define('HTTP_POST_SUCCESS', 201);
 class Rang {
 
 
-  public function __construct()
+  public function __construct($secret)
   {
-    parent:__construct();
 
-    $this->_client_secret       = "client_secret";
+    $this->_client_secret       = $secret;
     $this->_response_extension  = "json";
     $this->_base_uri            = "https://rang.com/wl";
   }
@@ -29,7 +28,7 @@ class Rang {
 
    /*
   |--------------------------------------------------------------------------
-  | Whitelabel API
+  | Whitelabel/Full API
   |--------------------------------------------------------------------------
   | + get_gift_token
   |
@@ -113,6 +112,7 @@ class Rang {
     $base_uri = "$this->_base_uri/issue_emails.$this->_response_extension";
     $query_params = array('api_token' => $this->_client_secret);
 
+    //prepare data for single email
     if(!is_array($emails))
     {
       $single_email = $emails;
@@ -131,7 +131,7 @@ class Rang {
 
   /*
   |--------------------------------------------------------------------------
-  | Helper Function
+  | Helper Functions
   |--------------------------------------------------------------------------
   | + _curl_call
   | + _build_uri
